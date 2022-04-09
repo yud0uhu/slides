@@ -533,8 +533,4 @@ https://github.com/yud0uhu/minimum-react-ts-sample
 
 ---
 
-### Babel Loader を使ってみる
-
----
-
 ご清聴ありがとうございました！
