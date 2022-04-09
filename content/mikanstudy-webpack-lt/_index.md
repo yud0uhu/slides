@@ -10,9 +10,9 @@ codeFences = false
 
 ### Webpack loader を<span style="color :#FF8C00;">理解り</span> たい
 
-2022-04-09 (Sun)
+未完 Project Webpack 勉強会
 
-_@denham95173179_
+_0yu[@denham95173179](https://twitter.com/denham95173179)_
 
 ---
 
