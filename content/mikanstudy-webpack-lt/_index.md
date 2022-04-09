@@ -1,22 +1,18 @@
----
-theme: "night"
-title: " Webpack loaderを理解りたい"
-presentation:
-  controls: true
-  slideNumber: true
-  backgroundTransition: "concave"
-  enableSpeakerNotes: true
-  highlightTheme: "monokai"
----
++++
+title = "Webpack loaderを理解りたい"
+outputs = ["Reveal"]
+[reveal_hugo]
+theme = "moon"
+slide_number = true
+[markup.highlight]
+codeFences = true
++++
 
-::: block
+### Webpack loader を<span style="color :#FF8C00;">理解り</span> たい
 
-### Webpack _loader_{style=color:#FF8C00;} を理解り たい
+2022-04-09 (Sun)
 
-<!-- 2022-04-09 (Sun) -->
-
-_@denham95173179_{style=color:#FF8C00;}  
-:::
+_@denham95173179_
 
 ---
 
