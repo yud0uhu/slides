@@ -3,19 +3,19 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://yud0uhu.github.com/slides/categories/</loc>
+    <loc>yud0uhu-slides.netlify.app/categories/</loc>
   </url>
   
   <url>
-    <loc>https://yud0uhu.github.com/slides/tags/</loc>
+    <loc>yud0uhu-slides.netlify.app/tags/</loc>
   </url>
   
   <url>
-    <loc>https://yud0uhu.github.com/slides/mikanstudy-webpack-lt/</loc>
+    <loc>yud0uhu-slides.netlify.app/mikanstudy-webpack-lt/</loc>
   </url>
   
   <url>
-    <loc>https://yud0uhu.github.com/slides/</loc>
+    <loc>yud0uhu-slides.netlify.app/</loc>
   </url>
   
 </urlset>

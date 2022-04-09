@@ -5,7 +5,7 @@ outputs = ["Reveal"]
 theme = "moon"
 slide_number = true
 [markup.highlight]
-codeFences = true
+codeFences = false
 +++
 
 ### Webpack loader を<span style="color :#FF8C00;">理解り</span> たい

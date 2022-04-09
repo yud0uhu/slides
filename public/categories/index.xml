@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on yud0uhu/slides</title>
-    <link>https://yud0uhu.github.com/slides/categories/</link>
+    <link>yud0uhu-slides.netlify.app/categories/</link>
     <description>Recent content in Categories on yud0uhu/slides</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>jp-us</language>
     
-	<atom:link href="https://yud0uhu.github.com/slides/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="yud0uhu-slides.netlify.app/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
