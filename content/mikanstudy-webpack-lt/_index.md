@@ -47,7 +47,7 @@ create-react-app
 
 ---
 
-<img src="../image/webpack-chart.drawio.png" width="450px">
+<img src="./images/webpack-chart.drawio.png" width="300px">
 
 ---
 
