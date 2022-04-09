@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>Webpack loaderを理解りたい</title>
+
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/slides/reveal-js/css/reset.css">
+<link rel="stylesheet" href="/slides/reveal-js/css/reveal.css"><link rel="stylesheet" href="/slides/reveal-js/css/theme/moon.css" id="theme">
+<link rel="stylesheet" href="/slides/highlight-js/default.min.css">
+    
+  </head>
+  <body>
+    
+    <div class="reveal">
+      <div class="slides">
+  
+
+    <section><h3 id="webpack-loader-をspan-stylecolor-ff8c00理解りspan-たい">Webpack loader を<span style="color :#FF8C00;">理解り</span> たい</h3>
+<p>2022-04-09 (Sun)</p>
+<p><em>@denham95173179</em></p>
+</section><section>
+<h3 id="事の運び">事の運び</h3>
+<p>JS のフレームワークを使っていて、ビルド周りを雰囲気でやっていることに気づく</p>
+</section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>vue-cli
+</code></pre></div><p>とか</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>create-react-app
+</code></pre></div><p>に頼りきってた</p>
+</section><section>
+<p>そろそろ Webpack を<span style="color :#FF8C00;"><ruby>理解<rp>（</rp><rt>わか</rt><rp>）</rp></ruby>り</span>たい</p>
+</section><section>
+<h3 id="そもそも-webpack-とは">そもそも Webpack とは？</h3>
+<ul>
+<li>ファイル(モジュール)を束ねる(bundle)するツール</li>
+<li>Web アプリケーションを構成するモジュール(JS のソースコード、スタイルシート、画像ファイル(.png や.jpeg や.gif))を 1 つ以上のバンドルにまとめる</li>
+</ul>
+</section><section>
+<img src="./images/webpack-chart.drawio.png" width="300px">
+</section><section>
+<h3 id="モジュールバンドラを使うと嬉しいこと">モジュールバンドラを使うと嬉しいこと</h3>
+<ol>
+<li>自動的に依存関係を解決する</li>
+<li>リクエストの回数を抑える</li>
+<li>大規模開発に向いている</li>
+</ol>
+</section><section>
+<h3 id="1-自動的に依存関係を解決する">1. 自動的に依存関係を解決する</h3>
+</section><section>
+<h3 id="旧来の-js">旧来の JS</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+&lt;<span style="color:#f92672">html</span>&gt;
+  &lt;<span style="color:#f92672">head</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span> /&gt;
+    &lt;<span style="color:#f92672">title</span>&gt;依存関係未解決パターン&lt;/<span style="color:#f92672">title</span>&gt;
+  &lt;/<span style="color:#f92672">head</span>&gt;
+  &lt;<span style="color:#f92672">body</span>&gt;
+    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;js/libs/lib.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;js/libs/axios.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;js/app.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+  &lt;/<span style="color:#f92672">body</span>&gt;
+&lt;/<span style="color:#f92672">html</span>&gt;
+</code></pre></div><p>app.js の実行には lib.js,axios.js というライブラリが必要なため、この順に読み込まれる必要がある</p>
+</section><section>
+<h3 id="モジュールバンドラの登場">モジュールバンドラの登場</h3>
+<p>一方でモジュールバンドラを使うと、依存関係を解決したファイルを出力してくれるため</p>
+</section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+&lt;<span style="color:#f92672">html</span>&gt;
+  &lt;<span style="color:#f92672">head</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span> /&gt;
+    &lt;<span style="color:#f92672">title</span>&gt;依存関係解決パターン&lt;/<span style="color:#f92672">title</span>&gt;
+  &lt;/<span style="color:#f92672">head</span>&gt;
+  &lt;<span style="color:#f92672">body</span>&gt;
+    &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;js/bundle.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+  &lt;/<span style="color:#f92672">body</span>&gt;
+&lt;/<span style="color:#f92672">html</span>&gt;
+</code></pre></div><p>これだけでアプリケーションが動作する！</p>
+</section><section>
+<h3 id="まとめると">まとめると</h3>
+<ul>
+<li>複数の JS コードの依存関係を自動で解析し、ひとつのファイルにしてくれる</li>
+<li>HTML 側ではコードの依存関係を意識することなく、まとめられたファイルをインポートするだけでアプリがそのまま動作する</li>
+</ul>
+<aside class="notes">
+Vue.js などの JS フレームワークは複数のライブラリから成り立っています。
+このようにライブラリの依存関係が肥大化するほど、開発者が依存関係を意識してページを記述するのは困難になります。
+そもそも、JS の依存関係を HTML 側で意識しなければならない状態は避けたいです。
+</aside>
+</section><section>
+<h3 id="2-リクエストの回数を抑える">2. リクエストの回数を抑える</h3>
+</section><section>
+<ul>
+<li>
+<p>ウェブブラウザとサーバーは<strong>HTTP/1.1</strong>という通信プロトコルで通信をしている</p>
+</li>
+<li>
+<p>HTTP1.1 環境 ではブラウザ/サーバー間の同時接続数が制限される(一度に処理できるリクエストの数に制限がある)ことから、複数ファイルのダウンロードは非効率的</p>
+</li>
+</ul>
+</section><section>
+<p><strong>そもそものリクエスト数を減らす</strong>ことで転送効率が向上する</p>
+</section><section>
+<h3 id="3-大規模開発に向いている">3. 大規模開発に向いている</h3>
+</section><section>
+<p>モジュールバンドラーを前提とすることで、コードはクラス・関数単位でファイルを分割できる。これによって下記のようなメリットがある</p>
+<ul>
+<li>可読性の向上</li>
+<li>名前空間の明確な分離</li>
+<li>モジュールの再利用性の向上</li>
+</ul>
+<aside class="notes">
+Webpackは分割したそれぞれのファイルに名前空間を生成するので、変数の競合やグローバル汚染を防ぎます。
+モジュールの再利用が可能となれば、複数のファイルに同じロジックを書くような状況が減らせます。
+依存関係を気にしなくていいので、変更が起こった際も1つのモジュールを更新するだけでよくなります。
+</aside>
+</section><section>
+<h3 id="なぜ-webpack-なの">なぜ Webpack なの？</h3>
+</section><section>
+<h3 id="さまざまなモジュール形式に対応しているため">さまざまなモジュール形式に対応しているため</h3>
+<ul>
+<li>CommonJS</li>
+<li>AMD</li>
+<li>ES Modules</li>
+</ul>
+<aside class="notes">
+Browserify や RequireJS などのモジュールバンドラーは特定のモジュール形式をサポートします。
+一方、Webpack であれば過去のモジュール資産を活用できる。
+</aside>
+</section><section>
+<h3 id="ローダープラグインが豊富であるため">ローダー・プラグインが豊富であるため</h3>
+<aside class="notes">
+プラグインを活用することでコードの圧縮(minify)など Webpack そのものを拡張可できます。
+</aside>
+</section><section>
+<h3 id="フレームワークでの活用実績が豊富であるため">フレームワークでの活用実績が豊富であるため</h3>
+<ul>
+<li>Vue.js</li>
+<li>React.js</li>
+<li>Angular.js
+etc</li>
+</ul>
+</section><section>
+<h3 id="core-concepts">Core Concepts</h3>
+<ul>
+<li><strong>Entry</strong></li>
+<li><strong>Output</strong></li>
+<li><strong>Loader</strong></li>
+<li><strong>Plugins</strong></li>
+<li>Mode</li>
+<li>Browser Compatibility</li>
+</ul>
+<aside class="notes">
+重要なのは上4つ
+</aside>
+</section><section>
+<h3 id="loader">Loader</h3>
+<aside class="notes">
+Webpackを学ぶこと=Loderを学ぶこと、といっても過言ではないです。
+今回は、このLoaderについてお話したいと思います。
+</aside>
+</section><section>
+<p><strong>Loader</strong> はリソースをモジュールに変換する</p>
+</section><section>
+<p>css-loader,style-loader,ts-loader など</p>
+<aside class="notes">
+Webpack はデフォルトで JS ファイルと JSON ファイルのみをバンドルします
+</aside>
+</section><section>
+<h3 id="ts-loader-の導入">ts-loader の導入</h3>
+</section><section>
+<h3 id="コンセプト">コンセプト</h3>
+<p>create react app を使わず React+TypeScript 環境を<em>最小構成</em>{style=color:#FF8C00;} で構築する</p>
+</section><section>
+<h3 id="構成">構成</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>.
+├── index.html
+├── package.json
+├── src
+│   ├── Hello.tsx
+│   └── index.tsx
+├── tsconfig.json
+├── webpack.config.development.js
+└── webpack.config.production.js
+
+</code></pre></div></section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#a6e22e">node</span>
+<span style="color:#a6e22e">v14</span><span style="color:#ae81ff">.17.6</span>
+
+<span style="color:#a6e22e">webpack</span>
+<span style="color:#a6e22e">v5</span><span style="color:#ae81ff">.71.0</span>
+
+<span style="color:#a6e22e">webpack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cli</span>
+<span style="color:#a6e22e">v4</span><span style="color:#ae81ff">.9.2</span>
+</code></pre></div></section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>$ mkdir minimum-react-ts-sample
+// webpack v5と必要なもの一式をインストール
+$ npm install webpack webpack-cli --save-dev
+// TypeScriptをインストール
+$ npm install typescript --save-dev
+// ts-loaderをインストール
+$ npm install ts-loader --save-dev
+// Reactをインストール
+$ npm install react react-dom
+// Reactの型定義をインストール
+$ npm install --save @types/react @types/react-dom
+</code></pre></div></section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>+ webpack-cli@4.9.2
++ webpack@5.71.0
++ typescript@4.6.3
++ ts-loader@9.2.8
++ react@18.0.0
++ react-dom@18.0.0
++ @types/react@17.0.43
++ @types/react-dom@17.0.14
+</code></pre></div></section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>$ ls
+node_modules  package-lock.json
+</code></pre></div></section><section>
+<p>webpack.js を作成する</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>touch webpack.config.development.js
+touch webpack.config.production.js
+</code></pre></div></section><section>
+<h3 id="最もシンプルな状態">最もシンプルな状態</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> {};
+</code></pre></div><p>この中のプロパティに値を設定していく</p>
+</section><section>
+<h3 id="tsconfigjson-を作成する">tsconfig.json を作成する</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>$ ./node_modules/.bin/tsc --init
+
+Created a new tsconfig.json with:
+
+  target: es2016
+  module: commonjs
+  strict: true
+  esModuleInterop: true
+  skipLibCheck: true
+  forceConsistentCasingInFileNames: true
+
+
+You can learn more at https://aka.ms/tsconfig.json
+</code></pre></div></section><section>
+<h3 id="オプションには-2-つのタイプが存在">オプションには 2 つのタイプが存在</h3>
+<ul>
+<li>TypeScript のコンパイラオプション
+<ul>
+<li>TypeScript のオプションは tsconfig.json ファイルを使って設定する必要がある</li>
+</ul>
+</li>
+<li>loader のプション
+<ul>
+<li>ローダーオプションは webpack の設定にある options プロパティで指定することがある</li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h3 id="typescript-のコンパイラオプション-の設定">TypeScript のコンパイラオプション の設定</h3>
+</section><section>
+<h3 id="jsx-に-react-を指定する">jsx に react を指定する</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#75715e">// tsconfig.json
+</span><span style="color:#75715e"></span>{
+  <span style="color:#e6db74">&#34;compilerOptions&#34;</span><span style="color:#f92672">:</span> {
+    <span style="color:#e6db74">&#34;jsx&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;react&#34;</span>,
+  }
+}
+</code></pre></div></section><section>
+<h3 id="ローダーオプションの設定">ローダーオプションの設定</h3>
+</section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">webpack.config.development.json</span>
+<span style="color:#960050;background-color:#1e0010">module.exports</span> <span style="color:#960050;background-color:#1e0010">=</span> {
+  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">エントリーポイント(バンドルの構築を開始する場所)を指定する。Webpackはこのファイルを基準に依存関係を解決していく。</span>
+  <span style="color:#960050;background-color:#1e0010">entry:</span> <span style="color:#f92672">&#34;./src/index.tsx&#34;</span>,
+  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">Webpackが作成したバンドルをどこに、どのような名前で出力するかを指定する</span>
+  <span style="color:#960050;background-color:#1e0010">output:</span> <span style="color:#960050;background-color:#1e0010">{</span>
+    <span style="color:#960050;background-color:#1e0010">filename:</span> <span style="color:#f92672">&#34;./dist/bundle.js&#34;</span>,
+  }<span style="color:#960050;background-color:#1e0010">,</span>
+  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">source-mapはdevelopmentmodeの場合のみ有効</span>
+  <span style="color:#960050;background-color:#1e0010">devtool:</span> <span style="color:#e6db74">&#34;source-map&#34;</span><span style="color:#960050;background-color:#1e0010">,</span>
+  <span style="color:#960050;background-color:#1e0010">resolve:</span> {
+    <span style="color:#960050;background-color:#1e0010">extensions:</span> <span style="color:#960050;background-color:#1e0010">[</span><span style="color:#f92672">&#34;.ts&#34;</span>, <span style="color:#f92672">&#34;.tsx&#34;</span>, <span style="color:#f92672">&#34;.js&#34;</span><span style="color:#960050;background-color:#1e0010">]</span>,
+  }<span style="color:#960050;background-color:#1e0010">,</span>
+  <span style="color:#960050;background-color:#1e0010">module:</span> {
+    <span style="color:#960050;background-color:#1e0010">rules:</span> <span style="color:#960050;background-color:#1e0010">[</span>
+      <span style="color:#960050;background-color:#1e0010">{</span>
+        <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">ローダーを使用することでデフォルトでは対応していないファイルをバンドル対象に加えることができる。testプロパティに変換したいファイルを指定する。</span>
+        <span style="color:#960050;background-color:#1e0010">test:</span> <span style="color:#960050;background-color:#1e0010">/\.tsx?$/,</span>
+        <span style="color:#960050;background-color:#1e0010">loader:</span> <span style="color:#f92672">&#34;ts-loader&#34;</span>,
+        <span style="color:#960050;background-color:#1e0010">options:</span> <span style="color:#960050;background-color:#1e0010">{</span>
+          <span style="color:#960050;background-color:#1e0010">transpileOnly:</span> <span style="color:#960050;background-color:#1e0010">true,</span> <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">型チェックを行わない。デフォルトはfalse</span>
+        }<span style="color:#960050;background-color:#1e0010">,</span>
+      <span style="color:#960050;background-color:#1e0010">},</span>
+    <span style="color:#960050;background-color:#1e0010">],</span>
+  <span style="color:#960050;background-color:#1e0010">},</span>
+<span style="color:#960050;background-color:#1e0010">};</span>
+</code></pre></div></section><section>
+<h3 id="モード">モード</h3>
+<p>パラメーターに<code>development</code>,<code>produciton</code>,<code>none</code>を与えることで、Webpack の設定を環境に応じて最適化できる</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#960050;background-color:#1e0010">module.exports</span> <span style="color:#960050;background-color:#1e0010">=</span> {
+  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">デフォルト値はproduction</span>
+  <span style="color:#960050;background-color:#1e0010">mode:</span> <span style="color:#960050;background-color:#1e0010">&#39;production&#39;</span>
+}<span style="color:#960050;background-color:#1e0010">;</span>
+</code></pre></div></section><section>
+<h3 id="packagejson-に追記する">package.json に追記する</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>{
+  <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;minimum-react-typescript-sample&#34;</span>,
+  <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;1.0.0&#34;</span>,
+  <span style="color:#f92672">&#34;scripts&#34;</span>: {
+    <span style="color:#f92672">&#34;build&#34;</span>: <span style="color:#e6db74">&#34;webpack --config ./webpack.config.development.js&#34;</span>,
+    <span style="color:#f92672">&#34;build-production&#34;</span>: <span style="color:#e6db74">&#34;webpack --config ./webpack.config.production.js&#34;</span>,
+    <span style="color:#f92672">&#34;type-check&#34;</span>: <span style="color:#e6db74">&#34;npx tsc -p . --noEmit&#34;</span> <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#960050;background-color:#1e0010">typescript</span> <span style="color:#960050;background-color:#1e0010">compilerを呼び出して型検査をするscriptを定義する。--noEmitオプションを付与すると、ファイルのoutputを行わずに型検査のみを実行する</span>
+  },
+  <span style="color:#f92672">&#34;devDependencies&#34;</span>: {
+    <span style="color:#f92672">&#34;@types/react&#34;</span>: <span style="color:#e6db74">&#34;^17.0.43&#34;</span>,
+    <span style="color:#f92672">&#34;@types/react-dom&#34;</span>: <span style="color:#e6db74">&#34;^17.0.14&#34;</span>,
+    <span style="color:#f92672">&#34;ts-loader&#34;</span>: <span style="color:#e6db74">&#34;9.2.8&#34;</span>,
+    <span style="color:#f92672">&#34;typescript&#34;</span>: <span style="color:#e6db74">&#34;4.6.3&#34;</span>,
+    <span style="color:#f92672">&#34;webpack&#34;</span>: <span style="color:#e6db74">&#34;5.71.0&#34;</span>,
+    <span style="color:#f92672">&#34;webpack-cli&#34;</span>: <span style="color:#e6db74">&#34;^4.9.2&#34;</span>
+  },
+  <span style="color:#f92672">&#34;dependencies&#34;</span>: {
+    <span style="color:#f92672">&#34;react&#34;</span>: <span style="color:#e6db74">&#34;^18.0.0&#34;</span>,
+    <span style="color:#f92672">&#34;react-dom&#34;</span>: <span style="color:#e6db74">&#34;^18.0.0&#34;</span>
+  }
+}
+</code></pre></div></section><section>
+<h3 id="怒られてみる">怒られてみる</h3>
+<ul>
+<li>Hello.tsx を下記のように書き換える</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">import</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">as</span> <span style="color:#a6e22e">React</span> <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;react&#34;</span>;
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Props</span> {
+  <span style="color:#a6e22e">content</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">number</span>; <span style="color:#75715e">// number型にした
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyComponent</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">React</span>.<span style="color:#a6e22e">Component</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">Props</span>, {}<span style="color:#f92672">&gt;</span> {
+  <span style="color:#a6e22e">render</span>() {
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">div</span><span style="color:#f92672">&gt;</span>{<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">content</span>}<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/div&gt;;</span>
+  }
+}
+</code></pre></div></section><section>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>$ npm run type-check
+</code></pre></div></section><section>
+<h3 id="怒られた">怒られた</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>src/index.tsx:6:10 - error TS2769: No overload matches this call.
+  Overload <span style="color:#ae81ff">1</span> of 2, <span style="color:#e6db74">&#39;(props: Props | Readonly&lt;Props&gt;): MyComponent&#39;</span>, gave the following error.
+    Type <span style="color:#e6db74">&#39;string&#39;</span> is not assignable to type <span style="color:#e6db74">&#39;number&#39;</span>.
+  Overload <span style="color:#ae81ff">2</span> of 2, <span style="color:#e6db74">&#39;(props: Props, context: any): MyComponent&#39;</span>, gave the following error.
+    Type <span style="color:#e6db74">&#39;string&#39;</span> is not assignable to type <span style="color:#e6db74">&#39;number&#39;</span>.
+
+<span style="color:#ae81ff">6</span>   &lt;Hello content<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;hello world&#34;</span> /&gt;,
+           ~~~~~~~
+
+  src/Hello.tsx:4:3
+    <span style="color:#ae81ff">4</span>   content: number;
+        ~~~~~~~
+    The expected type comes from property <span style="color:#e6db74">&#39;content&#39;</span> which is declared here on type <span style="color:#e6db74">&#39;IntrinsicAttributes &amp; IntrinsicClassAttributes&lt;MyComponent&gt; &amp; Readonly&lt;Props&gt; &amp; Readonly&lt;{ children?: ReactNode; }&gt;&#39;</span>
+  src/Hello.tsx:4:3
+    <span style="color:#ae81ff">4</span>   content: number;
+        ~~~~~~~
+    The expected type comes from property <span style="color:#e6db74">&#39;content&#39;</span> which is declared here on type <span style="color:#e6db74">&#39;IntrinsicAttributes &amp; IntrinsicClassAttributes&lt;MyComponent&gt; &amp; Readonly&lt;Props&gt; &amp; Readonly&lt;{ children?: ReactNode; }&gt;&#39;</span>
+
+
+Found <span style="color:#ae81ff">1</span> error in src/index.tsx:6
+</code></pre></div></section><section>
+<h3 id="ビルドを実行する">ビルドを実行する</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>$ npm run build
+
+&gt; minimum-react-typescript-sample@1.0.0 build /home/denham/workspace/minimum-react-ts-sample
+&gt; webpack --config ./webpack.config.development.js
+
+asset ./dist/bundle.js <span style="color:#ae81ff">138</span> KiB <span style="color:#f92672">[</span>emitted<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>minimized<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>name: main<span style="color:#f92672">)</span> <span style="color:#ae81ff">2</span> related assets
+modules by path ./node_modules/ <span style="color:#ae81ff">141</span> KiB
+  modules by path ./node_modules/react/ 6.96 KiB
+    ./node_modules/react/index.js <span style="color:#ae81ff">190</span> bytes <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+    ./node_modules/react/cjs/react.production.min.js 6.77 KiB <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+  modules by path ./node_modules/react-dom/ <span style="color:#ae81ff">130</span> KiB
+    ./node_modules/react-dom/index.js 1.33 KiB <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+    ./node_modules/react-dom/cjs/react-dom.production.min.js <span style="color:#ae81ff">128</span> KiB <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+  modules by path ./node_modules/scheduler/ 4.33 KiB
+    ./node_modules/scheduler/index.js <span style="color:#ae81ff">198</span> bytes <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+    ./node_modules/scheduler/cjs/scheduler.production.min.js 4.14 KiB <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+modules by path ./src/*.tsx 2.76 KiB
+  ./src/index.tsx 1.47 KiB <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+  ./src/Hello.tsx 1.29 KiB <span style="color:#f92672">[</span>built<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>code generated<span style="color:#f92672">]</span>
+
+WARNING in configuration
+The <span style="color:#e6db74">&#39;mode&#39;</span> option has not been set, webpack will fallback to <span style="color:#e6db74">&#39;production&#39;</span> <span style="color:#66d9ef">for</span> this value.
+Set <span style="color:#e6db74">&#39;mode&#39;</span> option to <span style="color:#e6db74">&#39;development&#39;</span> or <span style="color:#e6db74">&#39;production&#39;</span> to enable defaults <span style="color:#66d9ef">for</span> each environment.
+You can also set it to <span style="color:#e6db74">&#39;none&#39;</span> to disable any default behavior. Learn more: https://webpack.js.org/configuration/mode/
+
+webpack 5.71.0 compiled with <span style="color:#ae81ff">1</span> warning in <span style="color:#ae81ff">6620</span> ms
+</code></pre></div><p>🎉🎉🎉</p>
+</section><section>
+<h3 id="サンプルプロジェクト">サンプルプロジェクト</h3>
+<p><a href="https://github.com/yud0uhu/minimum-react-ts-sample">https://github.com/yud0uhu/minimum-react-ts-sample</a></p>
+</section><section>
+<h3 id="babel-loader-を使ってみる">Babel Loader を使ってみる</h3>
+</section><section>
+<p>ご清聴ありがとうございました！</p>
+</section>
+
+  
+
+
+</div>
+      
+
+    </div>
+<script type="text/javascript" src=/slides/reveal-hugo/object-assign.js></script>
+
+<a href="/slides/reveal-js/css/print/" id="print-location" style="display: none;"></a>
+<script type="text/javascript">
+  var printLocationElement = document.getElementById('print-location');
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = printLocationElement.href + (window.location.search.match(/print-pdf/gi) ? 'pdf.css' : 'paper.css');
+  document.getElementsByTagName('head')[0].appendChild(link);
+</script>
+
+<script type="application/json" id="reveal-hugo-site-params">null</script>
+<script type="application/json" id="reveal-hugo-page-params">{"slide_number":true,"theme":"moon"}</script>
+
+<script src="/slides/reveal-js/js/reveal.js"></script>
+
+<script type="text/javascript">
+  
+  
+  function camelize(map) {
+    if (map) {
+      Object.keys(map).forEach(function(k) {
+        newK = k.replace(/(\_\w)/g, function(m) { return m[1].toUpperCase() });
+        if (newK != k) {
+          map[newK] = map[k];
+          delete map[k];
+        }
+      });
+    }
+    return map;
+  }
+  
+  var revealHugoDefaults = { center: true, controls: true, history: true, progress: true, transition: "slide" };
+  var revealHugoSiteParams = JSON.parse(document.getElementById('reveal-hugo-site-params').innerHTML);
+  var revealHugoPageParams = JSON.parse(document.getElementById('reveal-hugo-page-params').innerHTML);
+  
+  var options = Object.assign({},
+    camelize(revealHugoDefaults),
+    camelize(revealHugoSiteParams),
+    camelize(revealHugoPageParams));
+  Reveal.initialize(options);
+</script>
+
+
+  
+  
+  <script type="text/javascript" src="/slides/reveal-js/plugin/markdown/marked.js"></script>
+  
+  <script type="text/javascript" src="/slides/reveal-js/plugin/markdown/markdown.js"></script>
+  
+  <script type="text/javascript" src="/slides/reveal-js/plugin/highlight/highlight.js"></script>
+  
+  <script type="text/javascript" src="/slides/reveal-js/plugin/zoom-js/zoom.js"></script>
+  
+  
+  <script type="text/javascript" src="/slides/reveal-js/plugin/notes/notes.js"></script>
+
+
+
+    
+    
+  </body>
+</html>
