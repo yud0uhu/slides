@@ -1,0 +1,13 @@
+baseURL = "https://yud0uhu.github.com/slides"
+languageCode = "jp-us"
+title = "yud0uhu/slides"
+
+theme = "reveal-hugo"
+
+[markup.goldmark.renderer]
+unsafe = true
+
+[outputFormats.Reveal]
+baseName = "index"
+mediaType = "text/html"
+isHTML = true
