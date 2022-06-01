@@ -190,7 +190,7 @@ int tarai(int x, int y, int z) {
 |C       |弱い         |静的       |
 |Java       |強い         |静的       |
 |Haskell       |強い         |静的       |
-|Python       |弱い         |動的       |
+|Python       |強い         |動的       |
 |JavaScript       |弱い         |動的       |
 |Ruby       |強い         |動的       |
 
