@@ -1,5 +1,5 @@
 +++
-title = "輪講"
+title = "ゼミ"
 outputs = ["Reveal"]
 [reveal_hugo]
 theme = "moon"
@@ -8,7 +8,7 @@ slide_number = true
 codeFences = false
 +++
 
-# 輪講 第3回
+# 第3回ゼミ
 
 ---
 
