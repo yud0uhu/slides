@@ -8,7 +8,7 @@ slide_number = true
 codeFences = false
 +++
 
-## 卒業研調査報告
+## 卒業研究調査報告
 #### 2022-06-09
 
 ---
@@ -56,7 +56,7 @@ codeFences = false
 # currentを実行する度に得られる結果が違う
 import time
 
-def current
+def current():
     return time.time()
     # 
     与えられた入力値以外から出力が決まる
@@ -85,10 +85,14 @@ std::string show(const int n) {
 ```py
 # 関数
 # Python total.py
-# numbers.add(0.5),numbers.add(1.5)...
+# import numpy as np
+# numbers = []
+# numbers.append(0.5)
+# numbers.append(1.5)
+# ...
 # >>> np.sum(numbers)
 # 2.0
-def total(numbers)
+def total(numbers):
     return np.sum(numbers)
 ```
 
@@ -185,7 +189,7 @@ int tarai(int x, int y, int z) {
 |:-------|:--------:|-------:|
 |C       |弱い         |静的       |
 |Java       |強い         |静的       |
-|Hasell       |強い         |静的       |
+|Haskell       |強い         |静的       |
 |Python       |弱い         |動的       |
 |JavaScript       |強い         |動的       |
 |Ruby       |強い         |動的       |
