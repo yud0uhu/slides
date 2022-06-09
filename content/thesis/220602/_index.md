@@ -27,7 +27,8 @@ codeFences = false
 
 ## 進捗
 - x86のエミュレータでOSを起動し，メモリマップを描画するまで(参考書/ゼロからのOS自作入門~3章)
-  - 今後はアセンブラのコードやブートローダをARMv6向けに移植し，実機(Arudino uno)で起動する
+  - ~今後はアセンブラのコードやブートローダをARMv6向けに移植し，実機(Arudino uno)で起動する~  
+  - ARMv6向けのOS(Lチカができる)を1から実装し，実機(Arudino uno)で起動する~  
 <img src="images/0602_1.png">
 
 ---
@@ -213,7 +214,13 @@ int tarai(int x, int y, int z) {
 ### 次週までにやること
 
 - 自作OS
-  - 環境をARMv6向けに移植し，実機で起動テストをする
+  - 実機で最小構成のOSを動かす
+  - 下記の本を進める
+<img src="https://images-na.ssl-images-amazon.com/images/I/412u9Zv7icL._SX398_BO1,204,203,200_.jpg">
+
+---
+
+### 次週までにやること
 
 - Haskell
   - 文法の学習
