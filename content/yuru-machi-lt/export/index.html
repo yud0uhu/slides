@@ -66,16 +66,18 @@
         <section >
             
             <p>+++
-title = “Hello world!”
+title = “GraphQLで遊んでみた”
 outputs = [“Reveal”]
 [reveal_hugo]
-theme = “solarized”
+theme = “sky”
 slide_number = true
 [markup.highlight]
 codeFences = false
 +++</p>
-<h2>GatsbyJS × microCMSでGraphQL</h2>
+<h2>GraphQLで遊んでみた</h2>
 <h4>2022-06-11</h4>
+<h4>ちとせゆるい勉強会</h4>
+<h5>0yu @denham95173179</h5>
 
             </section>
     
@@ -85,44 +87,221 @@ codeFences = false
     
         <section >
             
-            <h2>概要</h2>
-<hr>
-<h2>GraphQLのクエリ</h2>
-<hr>
-<h2>Chakra UI</h2>
-<hr>
-<h2>Chakra UI</h2>
-<p>仕様技術</p>
-<ul>
-<li>GatsbyJS</li>
-<li>microCMS</li>
-<li>TypeScript</li>
-<li>Emotion</li>
-<li>eslint / prettier / commitlint</li>
-</ul>
-<!-- めちゃくちゃ守られてます -->
-<ul>
-<li>UIテスト
-<ul>
-<li>StoryBook</li>
-</ul>
+            <h3>自己紹介</h3>
+<h3>0yu</h3>
+<p>cistLT B4<br>
+そろそろシン・ウルトラマンの2週目に行きたい</p>
+<img src="https://pbs.twimg.com/profile_images/1255840795157860352/IyDL33uk_400x400.jpg" width="150px" height="150px">
+<img src="https://ca.slack-edge.com/T011AKTJTU7-U0118QSLGQ1-ba22b76996be-48" width="150px" height="150px">
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>やったこと</h3>
+<ol>
+<li>
+<p>🐈REST API(HttpCats)をGraphQL APIに変換するサーバー建ててみた</p>
 </li>
+<li>
+<p>🏠GatsbyJS × MicroCMS × GraphQLでポートフォリオサイトを作った</p>
+</li>
+</ol>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🐈Hasura GraphQL Engine がめちゃくちゃ便利というお話です</h3>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🐈Hasura GraphQL Engineとは？</h3>
+<p>Postgres上にDBを作ると，GraphQL APIを爆速で構築してくれる便利エンジン</p>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🐈<a href="https://hasura.io/docs/latest/graphql/core/getting-started/docker-simple/">公式ドキュメント</a></h3>
+<p>に従ってDockerでHasuraを起動する</p>
+<pre><code class="language-sh"># 作業用ディレクトリにdocker-compose.yamlを追加する
+$ wget https://raw.githubusercontent.com/hasura/graphql-engine/stable/install-manifests/docker-compose/docker-compose.yaml
+# Hasura GraphQL engineを起動する
+$ docker-compose up -d
+# コンソールにアクセスする
+$ http://localhost:8080/console
+</code></pre>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🐈CREATE TABLEしてみる</h3>
+<img src="https://storage.googleapis.com/zenn-user-upload/037e4bf40d81-20220522.png" w='200px' />
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🐈APIからデータを取得し，Posgres内に格納する</h3>
+<pre><code class="language-js">// 各カラムに対応する情報と，https://http.cat/ から取得した画像をinsertする
+const axios = require(&quot;axios&quot;);
+const { Client } = require(&quot;graphqurl&quot;);
+const statuses = require(&quot;./lib/statuses.js&quot;);
+
+const client = new Client({
+  endpoint: &quot;http://localhost:8080/v1/graphql&quot;,
+  headers: {
+    &quot;Content-Type&quot;: &quot;application/json&quot;,
+    &quot;X-Hasura-Access-Key&quot;: XXXXXXXXXXXXXXXX,
+  },
+});
+statuses().forEach(async (value) =&gt; {
+  await axios
+    .get(`https://http.cat/${value.code}.jpg`, {})
+    .then((result) =&gt; {
+      const createStatus = `mutation insert_status (
+            $status_code: Int,
+            $status_image: String
+            $status_message: String
+        ) {
+            insert_status ( objects: [
+                    {
+                        status_code: $status_code,
+                        status_image: $status_image,
+                        status_message: $status_message,
+                    }
+                ]) {
+                affected_rows
+                    returning {
+                        status_code
+                        status_image
+                        status_message
+                    }
+                }
+            }`;
+
+      const statusDatails = {
+        status_code: value.code,
+        status_image: `https://http.cat/${value.code}.jpg`,
+        status_message: value.message,
+      };
+
+      client.query(createStatus, statusDatails).catch((error) =&gt; {
+        console.log(error);
+      });
+    })
+    .catch((code) =&gt; {
+      console.error(&quot;error:&quot; + code);
+    });
+});
+</code></pre>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🐈graphiQLコンソールからクエリを叩いてみる</h3>
+<img src="https://storage.googleapis.com/zenn-user-upload/1763c769e424-20220522.png" w='200px' />
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠GatsbyJS × MicroCMS × GraphQLでポートフォリオサイト(V5)を作った</h3>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <img src="./images/portofolio_03.jpg" height="800px">
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠使用技術</h3>
+<img src="https://img.icons8.com/office/50/undefined/react.png"/>
+<img src="https://img.icons8.com/color/48/undefined/chakra-ui.png"/>
+<img src="https://img.icons8.com/color/48/undefined/typescript.png"/>
+<img src="https://img.icons8.com/color/48/undefined/gatsbyjs.png"/>
+<img src="https://img.icons8.com/fluency-systems-regular/48/undefined/chakra-ui.png"/>
+<img src="https://img.icons8.com/color/48/undefined/graphql.png"/>
+<img src="https://emotion.sh/static/a76dfa0d18a0536af9e917cdb8f873b9/350dd/emotion.webp" width="50px"/>
+<img src="https://img.icons8.com/color/48/undefined/figma--v1.png"/>
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠GatsbyJS公式の提供するtsスターターがあるので使う</h3>
+<pre><code class="language-sh">$ npx gatsby new PortofolioSite https://github.com/jpedroschmitz/gatsby-starter-ts
+</code></pre>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠MicroCMS公式の提供するpluginを入れる</h3>
+<pre><code class="language-sh">$ yarn add gatsby-source-microcms
+</code></pre>
+<hr>
+<h3>🏠GraphQLの型定義について</h3>
+<ul>
+<li>先月リリースされた<a href="https://www.gatsbyjs.com/docs/reference/release-notes/v4.15/#graphql-typegen">GatsbyJSv4.15</a>でGraphQL Typegenが正式に標準サポートされた</li>
+<li>GraphQL のスキーマやクエリから TypeScript の型定義を自動生成してくれる</li>
+<li>v4.14で試験的にサポートされていた機能</li>
 </ul>
-
-            </section>
-    
-
-
-
-    
-        <section >
-            
-            <ul>
-<li>gatsbyの提供するtsスターターがあるのでそれを使います</li>
-</ul>
-<pre><code class="language-js">npx gatsby new PortofolioSite https://github.com/jpedroschmitz/gatsby-starter-ts
-</code></pre>
-<pre><code class="language-js">yarn run debelop
+<pre><code class="language-js">// gatsby-config.js
+module.exports = {
+  graphqlTypegen: true,
+}
 </code></pre>
 
             </section>
@@ -133,8 +312,118 @@ codeFences = false
     
         <section >
             
-            <p>MicroCMSの提供するpluginを入れる</p>
-<pre><code class="language-js">yarn add gatsby-source-microcms
+            <h3>🏠package.jsonを見てみる</h3>
+<pre><code class="language-js">{
+  &quot;name&quot;: &quot;gatsby-starter-ts&quot;,
+  &quot;description&quot;: &quot;A TypeScript starter for Gatsby that includes all you need to build amazing projects&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;private&quot;: true,
+  &quot;author&quot;: &quot;João Pedro Schmitz &lt;hey@joaopedro.dev&gt; (https://joaopedro.dev)&quot;,
+  &quot;license&quot;: &quot;MIT&quot;,
+  &quot;keywords&quot;: [
+    &quot;gatsby&quot;,
+    &quot;starter&quot;,
+    &quot;typescript&quot;
+  ],
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;gatsby develop&quot;,
+    &quot;build&quot;: &quot;gatsby build&quot;,
+    &quot;serve&quot;: &quot;gatsby serve&quot;,
+    &quot;clean&quot;: &quot;gatsby clean&quot;,
+    &quot;type-check&quot;: &quot;tsc&quot;,
+    &quot;lint&quot;: &quot;eslint --ignore-path .gitignore \&quot;src/**/*.+(ts|js|tsx)\&quot;&quot;,
+    &quot;format&quot;: &quot;prettier --ignore-path .gitignore \&quot;src/**/*.+(ts|js|tsx)\&quot; --write&quot;,
+    &quot;postinstall&quot;: &quot;husky install&quot;,
+    &quot;test&quot;: &quot;jest&quot;,
+    &quot;commit&quot;: &quot;cz&quot;,
+    &quot;storybook&quot;: &quot;start-storybook -p 6006&quot;,
+    &quot;build-storybook&quot;: &quot;build-storybook&quot;
+  },
+  &quot;lint-staged&quot;: {
+    &quot;./src/**/*.{ts,js,jsx,tsx}&quot;: [
+      &quot;eslint --ignore-path .gitignore --fix&quot;,
+      &quot;prettier --ignore-path .gitignore --write&quot;
+    ]
+  },
+  &quot;dependencies&quot;: {
+    &quot;@chakra-ui/gatsby-plugin&quot;: &quot;3.0.0&quot;,
+    &quot;@chakra-ui/icons&quot;: &quot;2.0.2&quot;,
+    &quot;@chakra-ui/layout&quot;: &quot;2.0.1&quot;,
+    &quot;@chakra-ui/react&quot;: &quot;2.1.2&quot;,
+    &quot;@emotion/react&quot;: &quot;11.9.0&quot;,
+    &quot;@emotion/styled&quot;: &quot;11.8.1&quot;,
+    &quot;@fontsource/reggae-one&quot;: &quot;4.5.9&quot;,
+    &quot;dotenv&quot;: &quot;16.0.1&quot;,
+    &quot;esbuild&quot;: &quot;0.14.42&quot;,
+    &quot;framer-motion&quot;: &quot;6.3.4&quot;,
+    &quot;gatsby&quot;: &quot;4.15.0&quot;,
+    &quot;gatsby-source-microcms&quot;: &quot;2.0.0&quot;,
+    &quot;react&quot;: &quot;18.1.0&quot;,
+    &quot;react-dom&quot;: &quot;18.1.0&quot;,
+    &quot;react-slick&quot;: &quot;0.29.0&quot;,
+    &quot;recoil&quot;: &quot;0.7.3&quot;,
+    &quot;storybook-addon-designs&quot;: &quot;6.2.1&quot;,
+    &quot;tsconfig-paths-webpack-plugin&quot;: &quot;3.5.2&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;@babel/core&quot;: &quot;^7.18.2&quot;,
+    &quot;@babel/preset-react&quot;: &quot;7.17.12&quot;,
+    &quot;@babel/preset-typescript&quot;: &quot;7.17.12&quot;,
+    &quot;@commitlint/cli&quot;: &quot;17.0.0&quot;,
+    &quot;@commitlint/config-conventional&quot;: &quot;17.0.0&quot;,
+    &quot;@storybook/addon-actions&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/addon-essentials&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/addon-interactions&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/addon-links&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/addon-postcss&quot;: &quot;2.0.0&quot;,
+    &quot;@storybook/builder-webpack5&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/manager-webpack5&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/react&quot;: &quot;^6.5.6&quot;,
+    &quot;@storybook/testing-library&quot;: &quot;^0.0.11&quot;,
+    &quot;@testing-library/dom&quot;: &quot;8.13.0&quot;,
+    &quot;@testing-library/jest-dom&quot;: &quot;5.16.4&quot;,
+    &quot;@testing-library/react&quot;: &quot;13.2.0&quot;,
+    &quot;@testing-library/react-hooks&quot;: &quot;8.0.0&quot;,
+    &quot;@types/jest&quot;: &quot;27.5.1&quot;,
+    &quot;@types/node&quot;: &quot;16.11.36&quot;,
+    &quot;@types/react&quot;: &quot;18.0.9&quot;,
+    &quot;@types/react-dom&quot;: &quot;18.0.5&quot;,
+    &quot;@typescript-eslint/eslint-plugin&quot;: &quot;5.27.0&quot;,
+    &quot;@typescript-eslint/parser&quot;: &quot;5.27.0&quot;,
+    &quot;babel-jest&quot;: &quot;28.1.0&quot;,
+    &quot;babel-loader&quot;: &quot;^8.2.5&quot;,
+    &quot;babel-preset-gatsby&quot;: &quot;2.14.0&quot;,
+    &quot;commitizen&quot;: &quot;4.2.4&quot;,
+    &quot;cz-conventional-changelog&quot;: &quot;3.3.0&quot;,
+    &quot;esbuild-register&quot;: &quot;3.3.3&quot;,
+    &quot;eslint&quot;: &quot;8.16.0&quot;,
+    &quot;eslint-config-prettier&quot;: &quot;8.5.0&quot;,
+    &quot;eslint-config-standard&quot;: &quot;17.0.0&quot;,
+    &quot;eslint-import-resolver-typescript&quot;: &quot;2.7.1&quot;,
+    &quot;eslint-loader&quot;: &quot;4.0.2&quot;,
+    &quot;eslint-plugin-import&quot;: &quot;2.26.0&quot;,
+    &quot;eslint-plugin-jest&quot;: &quot;26.2.2&quot;,
+    &quot;eslint-plugin-jsx-a11y&quot;: &quot;6.5.1&quot;,
+    &quot;eslint-plugin-n&quot;: &quot;15.2.0&quot;,
+    &quot;eslint-plugin-prettier&quot;: &quot;4.0.0&quot;,
+    &quot;eslint-plugin-promise&quot;: &quot;6.0.0&quot;,
+    &quot;eslint-plugin-react&quot;: &quot;7.30.0&quot;,
+    &quot;eslint-plugin-react-hooks&quot;: &quot;4.5.0&quot;,
+    &quot;husky&quot;: &quot;8.0.1&quot;,
+    &quot;identity-obj-proxy&quot;: &quot;3.0.0&quot;,
+    &quot;jest&quot;: &quot;28.1.0&quot;,
+    &quot;jest-environment-jsdom&quot;: &quot;28.1.0&quot;,
+    &quot;lint-staged&quot;: &quot;12.4.1&quot;,
+    &quot;prettier&quot;: &quot;2.6.2&quot;,
+    &quot;ts-jest&quot;: &quot;28.0.2&quot;,
+    &quot;typescript&quot;: &quot;4.6.4&quot;
+  },
+  &quot;config&quot;: {
+    &quot;commitizen&quot;: {
+      &quot;path&quot;: &quot;cz-conventional-changelog&quot;
+    }
+  }
+}
 </code></pre>
 
             </section>
@@ -145,20 +434,8 @@ codeFences = false
     
         <section >
             
-            <p>型をつけてくれる
-便利!!!</p>
-<p>みたいなことをいう</p>
-
-            </section>
-    
-
-
-
-    
-        <section >
-            
-            <p>クエリを叩いてみる</p>
-<pre><code class="language-json">query MyQuery {
+            <h3>🏠クエリを叩いてみる</h3>
+<pre><code class="language-js">query MyQuery {
   allMicrocmsWorks(limit: 10) {
     edges {
       node {
@@ -183,8 +460,86 @@ codeFences = false
     
         <section >
             
-            <h3>CSS</h3>
-<pre><code class="language-js">yarn add @chakra-ui/gatsby-plugin @chakra-ui/react @emotion/react @emotion/styled framer-motion
+            <h3>🏠クエリを叩いてみた</h3>
+<ul>
+<li>レスポンスだけでなく，コンポーネントでクエリの結果を使用するためのコードを生成してくれる</li>
+</ul>
+<img src="./images/graphql.jpg" width="900px">
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <img src="./images/portofolio_04.jpg" width="500px">
+👇
+<img src="./images/portofolio_01.jpg" width="500px">
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠クエリを扱う便利hook達</h3>
+<p>大きく<a href="https://www.gatsbyjs.com/docs/how-to/querying-data/page-query/">ページクエリ</a>と<a href="https://www.gatsbyjs.com/docs/how-to/querying-data/use-static-query/">コンポーネントクエリ</a>の2種類が提供されている</p>
+<ul>
+<li>page query</li>
+<li>useStaticQuery /StaticQuery</li>
+</ul>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠違いについて</h3>
+<ul>
+<li>page queryはpagesディレクトリ直下のコンポーネントからのみデータを取得できる(index.jsや404.jsなど)
+<ul>
+<li>クエリに変数を扱える</li>
+</ul>
+</li>
+<li>一方，useStaticQueryでは「どのコンポーネントでも」GraphQLを介してデータを取得できる
+<ul>
+<li>状態管理が楽</li>
+</ul>
+</li>
+</ul>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠Chakra UI について</h3>
+<ul>
+<li>CSS in JSなReactのUIコンポーネントライブラリ</li>
+<li>スタイルをUtility Propsとして直接渡せる
+<ul>
+<li>Tailwind inspired</li>
+</ul>
+</li>
+<li><a href="https://styled-system.com/">Styled System</a>が豊富なCSSプロパティを用意してくれている</li>
+</ul>
+<pre><code class="language-js">&lt;Box
+  fontSize={4}
+  fontWeight='bold'
+  p={3}
+  mb={[ 4, 5 ]}
+  color='white'
+  bg='primary'&gt;
+  Hello
+&lt;/Box&gt;
 </code></pre>
 
             </section>
@@ -195,11 +550,61 @@ codeFences = false
     
         <section >
             
-            <h3>グリッドレイアウトが楽！</h3>
+            <h3>🏠Chakra UI のここがよい</h3>
 <ul>
-<li>HStack</li>
-<li>VStack</li>
-<li>Tailwind Likeなのがよい</li>
+<li>型保護されているので，素でVSCodeの補完が効く</li>
+<li>Style付きコンポーネントの種類が豊富
+<ul>
+<li>同一の要素を等間隔で並べるのは<code>&lt;Stack&gt;</code>コンポーネントが便利</li>
+<li><code>&lt;Stack&gt;</code>は<code>&lt;Button&gt;</code>コンポーネントにいい感じのspaceがついたコンポーネント</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>方向</th>
+<th>align</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stack</td>
+<td>縦</td>
+<td>左</td>
+</tr>
+<tr>
+<td>HStack</td>
+<td>横</td>
+<td>中央</td>
+</tr>
+<tr>
+<td>VStack</td>
+<td>縦</td>
+<td>中央</td>
+</tr>
+</tbody>
+</table>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>🏠つらかったこと</h3>
+<ul>
+<li>レスポンシブのデザインで沼る</li>
+<li>LightHouseのスコアが低い
+<ul>
+<li>原因はシングルぺージに対して画像の量が多いなど
+→ 画像はWebPとnext/imageで軽量化</li>
+<li>チューニングしたい…</li>
+</ul>
+</li>
 </ul>
 
             </section>
@@ -210,15 +615,22 @@ codeFences = false
     
         <section >
             
-            <h3>つらかったこと</h3>
+            <h3>つくったもの</h3>
 <ul>
-<li>ChacraUIはモバイルファーストなので，モバイルを先に想定してデザインしないとレイアウトが崩れてつらい</li>
+<li>🐈<a href="https://github.com/yud0uhu/hasura-httpCats-graphql">https://github.com/yud0uhu/hasura-httpCats-graphql</a></li>
+<li>🏠<a href="https://planned-construction-site.vercel.app/">https://planned-construction-site.vercel.app/</a></li>
+<li>🏠<a href="https://github.com/yud0uhu/PortofolioSiteV5">https://github.com/yud0uhu/PortofolioSiteV5</a></li>
 </ul>
-<h3>LightHouseのスコアが低い</h3>
-<ul>
-<li>単純にシングルぺージに画像が大量にあるので</li>
-<li>画像をすべてwebpp形式にして<code>Imageタグ</code>で囲んだ</li>
-</ul>
+
+            </section>
+    
+
+
+
+    
+        <section >
+            
+            <h3>ご清聴ありがとうございました！！</h3>
 
             </section>
     

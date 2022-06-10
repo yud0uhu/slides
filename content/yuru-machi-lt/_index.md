@@ -15,10 +15,18 @@ codeFences = false
 
 ---
 
+### 自己紹介
+
+### 0yu
+cistLT B4  
+そろそろシン・ウルトラマンの2週目に行きたい
+
+<img src="https://pbs.twimg.com/profile_images/1255840795157860352/IyDL33uk_400x400.jpg" width="150px" height="150px">
+<img src="https://ca.slack-edge.com/T011AKTJTU7-U0118QSLGQ1-ba22b76996be-48" width="150px" height="150px">
 
 ---
 
-## やったこと
+### やったこと
 
 1. 🐈REST API(HttpCats)をGraphQL APIに変換するサーバー建ててみた
 
