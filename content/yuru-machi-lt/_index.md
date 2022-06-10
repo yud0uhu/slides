@@ -319,7 +319,6 @@ query MyQuery {
 <img src="./images/portofolio_04.jpg" width="500px">
 👇
 <img src="./images/portofolio_01.jpg" width="500px">
-<img src="./images/portofolio_02.jpg" width="500px">
 
 ---
 
