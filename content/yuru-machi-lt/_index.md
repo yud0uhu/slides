@@ -388,9 +388,9 @@ query MyQuery {
 
 ### つくったもの
 
-- 🐈https://github.com/yud0uhu/hasura-httpCats-graphql
-- 🏠https://planned-construction-site.vercel.app/
-- 🏠https://github.com/yud0uhu/PortofolioSiteV5
+- 🐈[https://github.com/yud0uhu/hasura-httpCats-graphql](https://github.com/yud0uhu/hasura-httpCats-graphql)
+- 🏠[https://planned-construction-site.vercel.app/](https://planned-construction-site.vercel.app/)
+- 🏠[https://github.com/yud0uhu/PortofolioSiteV5](https://github.com/yud0uhu/PortofolioSiteV5)
 
 ---
 
