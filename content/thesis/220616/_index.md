@@ -102,7 +102,10 @@ Temperature sensore-->Contorol computer-->Flow control actuator
 
 ---
 
+<!-- このようなシステムで，ソフトウェアが行うべきことは，データ収集と信号の線形化，スケーリング，制御計算，アクチュエーターの駆動です．しかし，SIL規格規格によって，割り込み処理は禁止されています． -->
+
 In such a system, the software should perform data acquisition, signal linearization, scaling, control calculations, and actuator driving.
+
 **However, the SIL standard prohibits interrupt processing.**
 
 ---
