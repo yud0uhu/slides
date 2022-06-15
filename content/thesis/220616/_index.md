@@ -58,8 +58,9 @@ Today, however, the situation is different.
 
 But, in the first place, **does "can" = "should"?**  
 **Why should RTOS be adopted?**  
-**What kind of design is RTOS compatible with?**  
-To make such decisions, it is necessary to learn the basics of practical design techniques in basic embedded system software.
+**What kind of design is RTOS compatible with?**
+
+<!-- To make such decisions, it is necessary to learn the basics of practical design techniques in basic embedded system software. -->
 
 ---
 
@@ -123,8 +124,10 @@ DelayUntilTime = xx millseconds;
 <!-- このように，組み込みプログラミングでは，高級言語の知識だけでなく，マシンのハードウェアや機能に関する専門的な知識を持っている必要があります．
 Thus, embedded programming requires not only knowledge of high-level languages, but also specialized knowledge of the machine's hardware and functionality. -->
 
-What are the basic functions of a real-time OS?
-A timer times out. How can software know what happens in real time in the computer world, such as when a power switch is pressed?
+### What are the basic functions of a real-time OS?
+
+A timer times out...  
+How can software know what happens in real time in the computer world, such as when a power switch is pressed?  
 There are two ways. `Polling` or `hardware interrupt`.
 
 <!-- リアルタイムOSの基本機能は何でしょうか．
@@ -162,12 +165,11 @@ Hardware and OS software considerations include.
 
 ---
 
-Commercial operating systems are extremely unstable in mainframe environments. The number, complexity, and scale of tasks to be processed at any one time is unknown.
+Commercial operating systems are scale of tasks to be processed at any one time is unknown.  
+In embedded applications, tasks are well defined.
 
----
+<!-- Therefore, the processor must be able to handle the total computer load on a fairly specific timescale. -->
 
-In embedded applications, tasks are well defined.  
-Therefore, the processor must be able to handle the total computer load on a fairly specific timescale.
 The operating system must be **efficient, and reliability of operation is of paramount importance**.
 
 ---
