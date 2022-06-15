@@ -1,8 +1,8 @@
 +++
-title = "Semminer"
+title = "輪講"
 outputs = ["Reveal"]
 [reveal_hugo]
-theme = "sky"
+theme = "Beige"
 slide_number = true
 [markup.highlight]
 codeFences = false
