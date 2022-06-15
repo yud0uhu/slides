@@ -138,8 +138,11 @@ There are two ways. `Polling` or `hardware interrupt`.
 しかし，「割り込み」はソフトウェア開発者が扱うには，非常に複雑な概念です．
 オペレーティングシステムの中心的な機能は、コード作成者からこの負担を取り除くことです。OSはプログラマーからコンピュータの複雑な部分を取り除き、プログラマーを本来の仕事に集中できるようにします。 -->
 
-Interrupts can be thought of as engines that execute specific software code.
-Interrupts can be used to execute multiple tasks "simultaneously.
+Interrupts can be
+
+- thought of as engines that execute specific software code.
+- used to execute multiple tasks "simultaneously".
+
 However, **"interrupts" are a very complex concept for software developers to deal with.**
 
 <!-- The central function of an operating system is to remove this burden from the code author; the OS removes the complexity of the computer from the programmer, allowing the programmer to focus on his or her primary task. -->
@@ -148,12 +151,14 @@ However, **"interrupts" are a very complex concept for software developers to de
 
 Hardware and OS software considerations include.
 
-- Task structuring of programs.
-- Task implementations as logically separate units (task abstraction).
-- Parallelism (concurrency) of operations.
-- Use of system resources at predetermined times.
-- Use of system resources at random times.
-- Task implementation with minimal hardware knowledge.
+```md
+1. Task structuring of programs.
+2. Task implementations as logically separate units (task abstraction).
+3. Parallelism (concurrency) of operations.
+4. Use of system resources at predetermined times.
+5. Use of system resources at random times.
+6. Task implementation with minimal hardware knowledge.
+```
 
 ---
 
