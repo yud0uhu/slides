@@ -103,11 +103,6 @@ DelayUntilTime = xx millseconds;
 
 ---
 
-<!-- - TASK
-  - Defined to be a software process, also known as a task in the embedded world. -->
-
----
-
 ## Basic features of real-time operating systems
 
 What are the basic functions of a real-time OS?
@@ -119,7 +114,8 @@ There are two ways. `Polling` or `hardware interrupt`.
 Interrupts can be thought of as engines that execute specific software code.
 Interrupts can be used to execute multiple tasks "simultaneously.
 However, "interrupts" are a very complex concept for software developers to deal with.
-The central function of an operating system is to remove this burden from the code author; the OS removes the complexity of the computer from the programmer, allowing the programmer to focus on his or her primary task.
+
+<!-- The central function of an operating system is to remove this burden from the code author; the OS removes the complexity of the computer from the programmer, allowing the programmer to focus on his or her primary task. -->
 
 ---
 
@@ -173,3 +169,5 @@ Tasks must be able to "talk" to each other, thus requiring communication facilit
 An OS is defined as "a set of software products that jointly control system resources on a computer and the processes that use those resources.
 Embedded OSs are smaller and simpler than mainframe OSs.  
 Finally, see the figure below.
+
+<img src="images/figure_2.png">
