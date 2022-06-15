@@ -39,22 +39,26 @@ However, until the mid-1980s, microcomputer OSs did not take root for the follow
 
 <!-- しかし現在では，事情が異なります
 商用の32bitの複合マイコンが普及していて，誰もが手軽に入手できます．
-そしてこれらは，これらは低コストで高性能なデバイスであり、豊富なオンチップメモリと周辺機能を内蔵しています． -->
+そしてこれらは(And these are)，これらは低コストで高性能なデバイスであり、豊富なオンチップメモリと周辺機能を内蔵しています． -->
 
-Today, however, the situation is different.  
-Because commercial 32-bit composite microcontrollers are widely available and easily accessible to everyone.  
-And these are low-cost, high-performance devices with rich on-chip memory and built-in peripheral functions.
+Today, however, the situation is different.
+
+- Commercial 32-bit composite microcontrollers are widely available and easily accessible to everyone.
+  - low-cost
+  - high-performance devices
+  - rich on-chip memory and built-in peripheral functions.
 
 ---
 
 <!-- しかし，そもそも，「できる」こと=「やるべき」ことなのか？
-なぜRTOSを採用するのか？
-RTOSが適合する設計とはどのようなものなのか？
-このような判断をするために，基本的な組み込みシステムのソフトウェアにおける実用的な設計手法の基礎を学ぶ必要があります． -->
+・なぜRTOSを採用するのか？
+・RTOSが適合する設計とはどのようなものなのか？
+このような判断をするために，私たちは基本的な組み込みシステムのソフトウェアにおける実用的な設計手法の基礎を学ぶ必要があります．
+ -->
 
-But, in the first place, does "can" = "should"?  
-Why should RTOS be adopted?  
-What kind of design is RTOS compatible with?  
+But, in the first place, **does "can" = "should"?**  
+**Why should RTOS be adopted?**  
+**What kind of design is RTOS compatible with?**  
 To make such decisions, it is necessary to learn the basics of practical design techniques in basic embedded system software.
 
 ---
