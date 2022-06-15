@@ -1,5 +1,5 @@
 +++
-title = "輪講"
+title = "Semminer"
 outputs = ["Reveal"]
 [reveal_hugo]
 theme = "sky"
@@ -8,7 +8,7 @@ slide_number = true
 codeFences = false
 +++
 
-## 輪講
+## Real Time Operation System
 
 #### 2022-06-16
 
@@ -91,6 +91,12 @@ What should software developers consider when applying these principles to real-
 ---
 
 For example, consider a system that controls temperature by varying the flow rate of a liquid.
+
+{{< mermaid >}}
+graph TD;
+Temperature sensore-->Contorol computer;
+Contorol computer-->Flow control actuator;
+{{< /mermaid >}}
 
 ---
 
