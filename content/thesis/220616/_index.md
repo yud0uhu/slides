@@ -97,10 +97,7 @@ What should software developers consider when applying these principles to real-
 For example, consider a system that controls temperature by varying the flow rate of a liquid.
 
 <!-- ```md
-graph TD;
-Temperature sensore-->Contorol computer;
-
-Contorol computer-->Flow control actuator;
+Temperature sensore-->Contorol computer-->Flow control actuator
 
 ````-->
 
