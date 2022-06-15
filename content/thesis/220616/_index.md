@@ -143,6 +143,8 @@ In this example, there are three main tasks: the JPT control, the flight recorde
 Executing each on a separate processor is called multiprocessor.
 However, this is expensive, complex, and technically overkill.
 
+<img src="images/figure_1.png">
+
 ---
 
 Each can be run on a separate processor, i.e., multiprocessing. In such a small system, this would be expensive, complex, and technologically excessive. Therefore, only one processor is used.
